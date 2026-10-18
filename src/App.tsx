@@ -56,6 +56,19 @@ const getLocalToday = () => {
   return `${year}-${month}-${day}`
 }
 
+const hasDateOverlap = (
+  startDate: string,
+  endDate: string,
+  trips: Trip[],
+  excludeTripId?: string
+) => {
+  return trips.some(trip =>
+    trip.id !== excludeTripId &&
+    startDate <= trip.endDate &&
+    endDate >= trip.startDate
+  )
+}
+
 const getTripStatus = (
   endDate: string,
   confirmed: boolean,
@@ -276,6 +289,11 @@ const filteredTrips = useMemo(
 
 
 const handleAddTrip = (newTrip: TripInput) => {
+  if (hasDateOverlap(newTrip.startDate, newTrip.endDate, trips)) {
+  alert('These travel dates overlap with an existing trip. Please choose different dates.')
+  return
+}
+
   const allocated = calculatedTrips
     .filter(trip => trip.status === 'Planning')
     .reduce((sum, trip) => sum + trip.budget, 0)
@@ -337,7 +355,15 @@ const handleDeleteTrip = (id: string) => {
 
 const handleEditTrip = (updatedTrip: TripInput) => {
   if (!editingTrip) return
-
+  if (hasDateOverlap(
+    updatedTrip.startDate,
+    updatedTrip.endDate,
+    trips,
+    editingTrip.id
+  )) {
+    alert('These travel dates overlap with an existing trip. Please choose different dates.')
+    return
+  }
   
 const allocated = calculatedTrips
   .filter(

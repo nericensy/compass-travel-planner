@@ -1,10 +1,11 @@
-
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import 'dotenv/config'
 import express from 'express'
 import { GoogleGenAI } from '@google/genai'
 
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 app.use(express.json({ limit: '20kb' }))
 
@@ -191,6 +192,19 @@ res.json({ itinerary })
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`Gemini backend running on http://localhost:${PORT}`)
+
+// Serve the production React build from the same Express server.
+// This lets Render host the frontend and API under one URL.
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const distPath = path.resolve(__dirname, '../dist')
+
+app.use(express.static(distPath))
+
+// React Router / SPA fallback for non-API page requests.
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'))
+})
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Compass running on port ${PORT}`)
 })

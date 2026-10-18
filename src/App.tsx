@@ -193,24 +193,52 @@ function App() {
     () => localStorage.getItem('atlas-theme') === 'dark'
   )
 
-  // Load initial records from the separate JSON file.
-  useEffect(() => {
-    fetch('/data/trips.json')
-      .then(response => {
-        if (!response.ok) throw new Error('Unable to load trips')
-        return response.json()
-      })
-      .then((data: Trip[]) => {
-      setTrips(
-      data.map(trip => ({
-      ...trip,
-      confirmed: trip.confirmed ?? trip.status === 'Upcoming',
-    }))
-  )
-})
-      .catch(() => setError('Unable to load trip data.'))
-      .finally(() => setLoading(false))
-  }, [])
+ // Load initial trips from JSON, then restore saved changes from localStorage.
+useEffect(() => {
+  fetch('/data/trips.json')
+    .then(response => {
+      if (!response.ok) throw new Error('Unable to load trips')
+      return response.json()
+    })
+    .then((data: Trip[]) => {
+      const initialTrips = data.map(trip => ({
+        ...trip,
+        confirmed: trip.confirmed ?? trip.status === 'Upcoming',
+      }))
+
+      const savedTrips = localStorage.getItem('compass-trips')
+
+      if (savedTrips !== null) {
+        try {
+          const parsedTrips: unknown = JSON.parse(savedTrips)
+
+          if (Array.isArray(parsedTrips)) {
+            setTrips(parsedTrips as Trip[])
+          } else {
+            setTrips(initialTrips)
+          }
+        } catch {
+          setTrips(initialTrips)
+        }
+      } else {
+        setTrips(initialTrips)
+      }
+    })
+    .catch(() => setError('Unable to load trip data.'))
+    .finally(() => setLoading(false))
+}, [])
+
+// Save trip changes after initial data has finished loading.
+useEffect(() => {
+  if (loading || error) return
+
+  try {
+    localStorage.setItem('compass-trips', JSON.stringify(trips))
+  } catch {
+    console.error('Unable to save trips to browser storage.')
+  }
+}, [trips, loading, error])
+
 
   // Persist the selected theme between browser sessions.
   useEffect(() => {

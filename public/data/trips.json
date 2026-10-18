@@ -1,0 +1,48 @@
+
+[
+  {
+    "id": "trip-001",
+    "destination": "Tokyo",
+    "country": "Japan",
+    "startDate": "2026-11-12",
+    "endDate": "2026-11-18",
+    "budget": 2500,
+    "status": "Upcoming"
+  },
+  {
+    "id": "trip-002",
+    "destination": "Seoul",
+    "country": "South Korea",
+    "startDate": "2026-12-05",
+    "endDate": "2026-12-10",
+    "budget": 1800,
+    "status": "Planning"
+  },
+  {
+    "id": "trip-003",
+    "destination": "Bali",
+    "country": "Indonesia",
+    "startDate": "2026-10-14",
+    "endDate": "2026-10-18",
+    "budget": 1200,
+    "status": "Completed"
+  },
+  {
+    "id": "trip-004",
+    "destination": "Bangkok",
+    "country": "Thailand",
+    "startDate": "2027-01-15",
+    "endDate": "2027-01-20",
+    "budget": 950,
+    "status": "Planning"
+  },
+  {
+    "id": "trip-005",
+    "destination": "Sydney",
+    "country": "Australia",
+    "startDate": "2027-03-10",
+    "endDate": "2027-03-17",
+    "budget": 3200,
+    "status": "Planning"
+  }
+]

@@ -1,0 +1,31 @@
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@import "tailwindcss";
+
+@theme {
+  --color-atlas-forest: #243A32;
+  --color-atlas-sage: #71816A;
+  --color-atlas-champagne: #C4AD87;
+  --color-atlas-ivory: #F6F3EB;
+  --color-atlas-stone: #E8E5DB;
+  --color-atlas-muted: #7B817B;
+  --color-atlas-dark: #141D1A;
+  --color-atlas-dark-card: #202B26;
+}
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button {
+  cursor: pointer;
+}

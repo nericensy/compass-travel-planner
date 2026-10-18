@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { downloadItineraryPdf } from '../services/itineraryPdf'
 import type { ReactNode } from 'react'
-import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Lightbulb, MapPin, TrainFront, Wallet, X, Printer, Download } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Lightbulb, MapPin, TrainFront, Wallet, X, Printer } from 'lucide-react'
 import type { StructuredItinerary } from '../services/itineraryAPI'
 
 type TripDetails = { destination: string; country: string; startDate: string; endDate: string; budget: number }
@@ -12,13 +12,12 @@ type Props = {
   error: string
   storageError: string
   onClose: () => void
-  onDownload: () => void
 }
 const money = (n: number) => new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD', maximumFractionDigits: 0 }).format(n)
 const dateLabel = (s: string) => new Date(`${s}T12:00:00`).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' })
 const labels: Record<string, string> = { accommodation: 'Accommodation', food: 'Food & drink', transport: 'Transport', activities: 'Activities', miscellaneous: 'Miscellaneous' }
 
-export default function ItineraryViewer({ trip, itinerary, generating, error, storageError, onClose, onDownload }: Props) {
+export default function ItineraryViewer({ trip, itinerary, generating, error, storageError, onClose }: Props) {
   const [selectedDay, setSelectedDay] = useState(0)
   const [pdfError, setPdfError] = useState('')
   const savePdf = () => {
@@ -96,7 +95,6 @@ export default function ItineraryViewer({ trip, itinerary, generating, error, st
         </div>
         <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-atlas-stone p-4 dark:border-[#3B443E] print:hidden">
           {itinerary !== null && <>
-            <button type="button" onClick={onDownload} className="flex items-center gap-2 rounded-xl border border-atlas-stone px-4 py-2 text-sm font-medium dark:border-[#3B443E]"><Download size={16}/> Download copy</button>
             <button type="button" onClick={savePdf} className="flex items-center gap-2 rounded-xl border border-atlas-stone px-4 py-2 text-sm font-medium dark:border-[#3B443E]"><Printer size={16}/> Download PDF</button>
           </>}
           {!generating && <button type="button" onClick={onClose} className="rounded-xl bg-atlas-forest px-5 py-2 text-sm font-semibold text-white dark:bg-atlas-champagne dark:text-[#171A19]">Close</button>}

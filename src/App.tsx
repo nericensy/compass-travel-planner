@@ -236,16 +236,6 @@ const openItinerary = async (trip: Trip) => {
   }
 }
 
-// Download an offline copy; the viewer also supports browser Print → Save as PDF.
-const downloadItinerary = (trip: Trip, content: string) => {
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `compass-${trip.destination.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-itinerary.txt`
-  link.click()
-  URL.revokeObjectURL(url)
-}
 
 const filteredTrips = useMemo(
   () =>
@@ -637,9 +627,6 @@ setTrips(previousTrips =>
             error={itineraryError}
             storageError={storageError}
             onClose={() => setActiveItineraryTrip(null)}
-            onDownload={() => {
-              if (content !== null) downloadItinerary(trip, typeof content === 'string' ? content : JSON.stringify(content, null, 2))
-            }}
           />
         )
       })()}

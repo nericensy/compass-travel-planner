@@ -165,13 +165,13 @@ function App() {
   const [showAddTrip, setShowAddTrip] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
   const [budgetLimit, setBudgetLimit] = useState(() => {
-  const saved = localStorage.getItem('atlas-planning-budget')
+  const saved = localStorage.getItem('compass-planning-budget')
   const amount = saved === null ? 10000 : Number(saved)
     return Number.isFinite(amount) && amount >= 0 ? amount : 10000
   })
 
   useEffect(() => {
-    localStorage.setItem('atlas-planning-budget', String(budgetLimit))
+    localStorage.setItem('compass-planning-budget', String(budgetLimit))
   }, [budgetLimit])
 
   const [trips, setTrips] = useState<Trip[]>([])
@@ -191,7 +191,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem('atlas-theme') === 'dark'
+    () => localStorage.getItem('compass-theme') === 'dark'
   )
 
  // Load initial trips from JSON, then restore saved changes from localStorage.
@@ -244,7 +244,7 @@ useEffect(() => {
   // Persist the selected theme between browser sessions.
   useEffect(() => {
     localStorage.setItem(
-      'atlas-theme',
+      'compass-theme',
       darkMode ? 'dark' : 'light'
     )
   }, [darkMode])
@@ -539,7 +539,7 @@ setTrips(previousTrips =>
 
                           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-atlas-ivory dark:bg-[#2E3D34]">
                           {(() => {
-                          {/* Find the country's flag, or show a default icon if unavailable. */}
+                          // Find the country's flag, or show a default icon if unavailable. 
                           const countryName = countryAliases[trip.country] ?? trip.country
 
                           const match = countries.find(
@@ -655,7 +655,7 @@ setTrips(previousTrips =>
           </section>
 
           <footer className="text-center text-sm text-atlas-muted dark:text-[#B7C2B8]">
-            Atlas Travel Planner · Made for explorers
+            Compass Travel Planner · Made for explorers
           </footer>
         
         </main>

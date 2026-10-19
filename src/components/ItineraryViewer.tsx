@@ -20,6 +20,8 @@ const labels: Record<string, string> = { accommodation: 'Accommodation', food: '
 export default function ItineraryViewer({ trip, itinerary, generating, error, storageError, onClose }: Props) {
   const [selectedDay, setSelectedDay] = useState(0)
   const [pdfError, setPdfError] = useState('')
+
+  // Download the generated itinerary as a PDF file.
   const savePdf = () => {
     if (itinerary === null) return
     try {
@@ -30,6 +32,7 @@ export default function ItineraryViewer({ trip, itinerary, generating, error, st
       setPdfError('Could not create the PDF. Please try again.')
     }
   }
+  // Check if the itinerary contains structured data from Gemini.
   const structured = itinerary !== null && typeof itinerary !== 'string' ? itinerary : null
   const totalDays = structured?.days.length ?? 0
   const breakdown = structured?.budgetBreakdown
@@ -76,6 +79,7 @@ export default function ItineraryViewer({ trip, itinerary, generating, error, st
                 <button type="button" disabled={selectedDay === 0} onClick={() => setSelectedDay(d => Math.max(0, d - 1))} className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-35"><ChevronLeft size={16}/> Previous</button>
                 <button type="button" disabled={selectedDay >= totalDays - 1} onClick={() => setSelectedDay(d => Math.min(totalDays - 1, d + 1))} className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-35">Next day <ChevronRight size={16}/></button>
               </div>
+              {/* Show all itinerary days in the print layout instead of just the selected day. */}
               <div className="hidden print:block">{structured.days.map((day, i) => <div key={`${day.date}-${i}`} className="compass-print-day mb-5 rounded-xl border border-gray-200 p-4"><DayContent day={day}/></div>)}</div>
             </section>
             {breakdown && <section className="rounded-2xl border border-atlas-stone p-5 dark:border-[#3B443E]">

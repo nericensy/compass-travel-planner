@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { X, PlaneTakeoff } from 'lucide-react'
 
+//Set the validation rules 
 const tripSchema = z.object({
   destination: z.string().trim().min(1, 'Destination is required'),
   country: z.string().trim().min(1, 'Country is required'),
@@ -99,7 +100,8 @@ export default function AddTripModal({
             <X size={20} />
           </button>
         </div>
-
+        
+        {/* Validate the form before passing it back to app.tsx */}
         <form noValidate onSubmit={handleSubmit(onAdd)} className="space-y-4">
           <div>
             <label htmlFor="destination" className="mb-1 block text-sm font-medium">

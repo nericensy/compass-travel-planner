@@ -4,17 +4,19 @@ import 'dotenv/config'
 import express from 'express'
 import { GoogleGenAI } from '@google/genai'
 
+//set up the Express server and port
 const app = express()
 const PORT = process.env.PORT || 3001
 
+//Allow server to receive JSON data from the frontend 
 app.use(express.json({ limit: '20kb' }))
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 })
 
-// A separate backend protects our Gemini API key from
-// being exposed in the browser or frontend source code.
+
+//Handle itinerary requests from the frontend without exposing API key
 app.post('/api/itinerary', async (req, res) => {
   try {
     const { destination, country, startDate, endDate, budget } = req.body
@@ -50,7 +52,7 @@ app.post('/api/itinerary', async (req, res) => {
       })
     }
 
-    
+//send the trip details to gemini to generate a daily itinerary 
 const response = await ai.models.generateContent({
   model: 'gemini-3.5-flash-lite',
 
@@ -81,8 +83,7 @@ const response = await ai.models.generateContent({
     Treat prices and opening hours as estimates, not verified facts.
   `,
 
-  // Structured output ensures the frontend receives predictable
-  // fields instead of trying to parse arbitrary AI-generated text.
+  //Ask gemini to return JSON so the frontend can display the itinerary 
   config: {
     responseMimeType: 'application/json',
 
@@ -154,12 +155,10 @@ const response = await ai.models.generateContent({
 })
 
 
-    
+// Convert JSON response into an object 
 const itinerary = JSON.parse(response.text ?? 'null')
 
-// Validate the number and sequence of days before saving.
-// The JSON schema checks the shape, but our app must also
-// verify that the response matches the requested travel dates.
+
 if (
   !itinerary ||
   !Array.isArray(itinerary.days) ||
@@ -181,6 +180,7 @@ if (
   })
 }
 
+//Return error message if itinerary generation fails 
 res.json({ itinerary })
 
   } catch (error) {
@@ -193,8 +193,7 @@ res.json({ itinerary })
 })
 
 
-// Serve the production React build from the same Express server.
-// This lets Render host the frontend and API under one URL.
+//Locate the built React files so Express can serve the website
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distPath = path.resolve(__dirname, '../dist')
 

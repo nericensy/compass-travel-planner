@@ -56,6 +56,7 @@ const getLocalToday = () => {
   return `${year}-${month}-${day}`
 }
 
+// Check if the selected dates overlap with another trip
 const hasDateOverlap = (
   startDate: string,
   endDate: string,
@@ -69,6 +70,7 @@ const hasDateOverlap = (
   )
 }
 
+// Update the trip status based on its end date and confirmation
 const getTripStatus = (
   endDate: string,
   confirmed: boolean,
@@ -139,7 +141,6 @@ const countryAliases: Record<string, string> = {
 
 
 // Store the generated text against a trip ID and its relevant details.
-// If a trip is edited, its previous itinerary is no longer treated as current.
 type SavedItinerary = { fingerprint: string; text?: string; data?: StructuredItinerary }
 type SavedItineraries = Record<string, SavedItinerary>
 const ITINERARY_STORAGE_KEY = 'compass-saved-itineraries'
@@ -249,6 +250,7 @@ useEffect(() => {
   }, [darkMode])
 
 
+// Recalculate trip statuses when the trip data or date changes
 const calculatedTrips = useMemo(
   () =>
     trips.map(trip => ({
@@ -263,8 +265,7 @@ const calculatedTrips = useMemo(
 )
 
   
-// Save generated itineraries locally so they remain available after refresh.
-// This is browser-only storage, not cloud syncing or a downloadable file.
+// Save generated itineraries in the browser for later use.
 useEffect(() => {
   try {
     localStorage.setItem(ITINERARY_STORAGE_KEY, JSON.stringify(savedItineraries))
@@ -302,7 +303,7 @@ const openItinerary = async (trip: Trip) => {
   }
 }
 
-
+// Filter trips based on the destination or country entered in search.
 const filteredTrips = useMemo(
   () =>
     calculatedTrips.filter(trip =>
@@ -315,7 +316,7 @@ const filteredTrips = useMemo(
 
 
 
-
+// Check for overlapping dates and budget limits before adding a trip.
 const handleAddTrip = (newTrip: TripInput) => {
   if (hasDateOverlap(newTrip.startDate, newTrip.endDate, trips)) {
   alert('These travel dates overlap with an existing trip. Please choose different dates.')
@@ -358,7 +359,7 @@ const handleAddTrip = (newTrip: TripInput) => {
   setShowAddTrip(false)
 }
 
-
+// Delete the selected trip and its saved itinerary after confirmation.
 const handleDeleteTrip = (id: string) => {
   const tripToDelete = trips.find(trip => trip.id === id)
 
@@ -380,7 +381,7 @@ const handleDeleteTrip = (id: string) => {
   })
 }
 
-
+// Validate the updated trip before saving changes.
 const handleEditTrip = (updatedTrip: TripInput) => {
   if (!editingTrip) return
   if (hasDateOverlap(
@@ -428,8 +429,7 @@ setTrips(previousTrips =>
 )
 
 
-  // Old itineraries are kept in storage, but their fingerprints will
-  // no longer match an edited trip, so they won't be shown as current.
+
   setEditingTrip(null)
 }
 
@@ -539,6 +539,7 @@ setTrips(previousTrips =>
 
                           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-atlas-ivory dark:bg-[#2E3D34]">
                           {(() => {
+                          {/* Find the country's flag, or show a default icon if unavailable. */}
                           const countryName = countryAliases[trip.country] ?? trip.country
 
                           const match = countries.find(
@@ -591,8 +592,7 @@ setTrips(previousTrips =>
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
 
-                          {/* AI generation is user-triggered, never automatic.
-                              Reopening a saved itinerary uses no API credits. */}
+                          {/* AI generation button */}
                           <button
                             type="button"
                             disabled={generatingId !== null}

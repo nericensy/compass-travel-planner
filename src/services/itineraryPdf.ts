@@ -11,8 +11,7 @@ type TripDetails = {
 
 const sgd = (n: number) => `SGD ${new Intl.NumberFormat('en-SG', { maximumFractionDigits: 0 }).format(n)}`
 
-// Standard PDF fonts cannot render every Unicode character. Normalize common
-// punctuation; use an embedded Unicode font if full multilingual support is needed.
+// Replace special characters that may not display properly in the PDF.
 const pdfText = (value: string) => value
   .replace(/[\u2018\u2019]/g, "'")
   .replace(/[\u201c\u201d]/g, '"')
@@ -20,6 +19,8 @@ const pdfText = (value: string) => value
   .replace(/\u2022/g, '-')
   .replace(/\u00a0/g, ' ')
 
+
+// Generate an A4 PDF using the trip details and itinerary.
 export function downloadItineraryPdf(trip: TripDetails, itinerary: StructuredItinerary | string) {
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const pageWidth = pdf.internal.pageSize.getWidth()
@@ -32,6 +33,7 @@ export function downloadItineraryPdf(trip: TripDetails, itinerary: StructuredIti
   const green: [number, number, number] = [36, 58, 50]
   const muted: [number, number, number] = [93, 108, 98]
 
+ // Add a new page when there isn't enough space for the next section.
   function newPage() { pdf.addPage(); y = 23 }
   function ensureSpace(mm: number) { if (y + mm > bottom) newPage() }
   function paragraph(text: string, options: { size?: number; bold?: boolean; indent?: number; after?: number; color?: [number, number, number] } = {}) {
